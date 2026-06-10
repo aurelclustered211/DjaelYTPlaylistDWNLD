@@ -405,6 +405,13 @@ def attach_to_console():
 def run_cli(args):
     """Executes the downloader in headless CLI mode."""
     attach_to_console()
+    # Ensure stdout/stderr use UTF-8 to handle non-ASCII track names (e.g. SoundCloud)
+    if hasattr(sys.stdout, 'reconfigure'):
+        try:
+            sys.stdout.reconfigure(encoding='utf-8', errors='replace')
+            sys.stderr.reconfigure(encoding='utf-8', errors='replace')
+        except Exception:
+            pass
     if not args.playlist:
         print("Error: Spotify playlist URL or ID must be specified using --playlist or -p.")
         sys.exit(1)

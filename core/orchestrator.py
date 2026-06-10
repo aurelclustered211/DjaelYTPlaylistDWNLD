@@ -16,7 +16,11 @@ def orchestrate_download(playlist_url, output_dir, bitrate, client_id=None, clie
         if log_cb:
             log_cb(message)
         else:
-            print(message)
+            # Safely handle non-ASCII characters on Windows consoles with limited encoding
+            try:
+                print(message)
+            except UnicodeEncodeError:
+                print(message.encode('ascii', 'replace').decode('ascii'))
 
     platform = detect_platform(playlist_url)
     log(f"[PLATFORM] Detected playlist platform: {platform}")

@@ -1,16 +1,24 @@
 import os
 import yt_dlp
 import re
+import unicodedata
 from core.utils import get_resource_path
 
 def sanitize_filename(name):
     """
-    Remove invalid characters for Windows filenames.
+    Remove invalid characters for Windows filenames and transliterate
+    non-ASCII characters to their closest ASCII equivalents.
     """
     # Windows invalid chars: \ / : * ? " < > |
     sanitized = re.sub(r'[\\/*?:"<>|]', "", name)
+    # Transliterate Unicode → closest ASCII (e.g. ū → u, é → e)
+    nfkd = unicodedata.normalize('NFKD', sanitized)
+    ascii_safe = nfkd.encode('ascii', 'ignore').decode('ascii')
+    # If transliteration emptied the string entirely, keep original minus bad chars
+    if not ascii_safe.strip():
+        ascii_safe = sanitized
     # Strip leading/trailing spaces and dots
-    return sanitized.strip().strip('.')
+    return ascii_safe.strip().strip('.')
 
 def download_track(video_id, output_dir, track_index, track_title, preferred_quality, progress_callback):
     """
