@@ -1,5 +1,5 @@
 import os
-from core.spotify_extractor import get_spotify_client, extract_playlist_id, get_playlist_tracks
+from core.playlist_extractor import detect_platform, get_playlist_tracks_general
 from core.yt_matcher import find_best_match
 from core.downloader import download_track, sanitize_filename
 from core.tagger import apply_metadata
@@ -7,7 +7,7 @@ from core.utils import scan_local_mp3s, clean_text, get_similarity_ratio
 
 def orchestrate_download(playlist_url, output_dir, bitrate, client_id=None, client_secret=None, log_cb=None, progress_cb=None, stop_check_cb=None):
     """
-    Orchestrates the Spotify playlist extraction, YouTube Music matching,
+    Orchestrates the playlist extraction, YouTube Music matching,
     audio downloading, and metadata tagging processes.
     
     Can be run from either GUI (background thread) or CLI (main thread).
@@ -18,15 +18,14 @@ def orchestrate_download(playlist_url, output_dir, bitrate, client_id=None, clie
         else:
             print(message)
 
-    log("[SPOTIFY] Connecting to Spotify API...")
-    sp = get_spotify_client(client_id, client_secret)
-    playlist_id = extract_playlist_id(playlist_url)
+    platform = detect_platform(playlist_url)
+    log(f"[PLATFORM] Detected playlist platform: {platform}")
     
-    log("[SPOTIFY] Retrieving playlist tracks...")
-    tracks = get_playlist_tracks(sp, playlist_id)
+    log(f"[{platform.upper()}] Retrieving playlist tracks...")
+    tracks = get_playlist_tracks_general(playlist_url, client_id, client_secret)
     total_tracks = len(tracks)
     
-    log(f"[SPOTIFY] {total_tracks} tracks detected (excluding local files).")
+    log(f"[{platform.upper()}] {total_tracks} tracks detected (excluding local files).")
     if total_tracks == 0:
         raise ValueError("No valid tracks found in this playlist.")
         

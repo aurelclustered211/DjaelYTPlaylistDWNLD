@@ -30,12 +30,18 @@ class DjaelYTPlaylistDWNLD(ctk.CTk):
         self.resizable(True, True)
         self.minsize(700, 560)
         
-        # Set app window icon if logo.png exists
-        logo_path = get_resource_path("logo.png")
-        if os.path.exists(logo_path):
+        # Set app window icon
+        logo_ico = get_resource_path("logo.ico")
+        logo_png = get_resource_path("logo.png")
+        if os.path.exists(logo_ico):
+            try:
+                self.iconbitmap(logo_ico)
+            except Exception:
+                pass
+        elif os.path.exists(logo_png):
             try:
                 from PIL import Image, ImageTk
-                icon_image = ImageTk.PhotoImage(Image.open(logo_path))
+                icon_image = ImageTk.PhotoImage(Image.open(logo_png))
                 self.iconphoto(False, icon_image)
             except Exception:
                 pass
@@ -44,6 +50,7 @@ class DjaelYTPlaylistDWNLD(ctk.CTk):
         self.gui_queue = queue.Queue()
         self.download_thread = None
         self.stop_requested = False
+        self.last_detected_platform = None
         
         self.build_ui()
         self.load_settings_into_ui()
@@ -82,10 +89,11 @@ class DjaelYTPlaylistDWNLD(ctk.CTk):
         tab.grid_columnconfigure(1, weight=1)
         tab.grid_rowconfigure(4, weight=1)  # Log box row takes available height
         
-        # Spotify URL Input
-        ctk.CTkLabel(tab, text="Spotify Playlist URL/ID:", font=("Segoe UI", 12, "bold")).grid(row=0, column=0, padx=15, pady=10, sticky="w")
-        self.playlist_entry = ctk.CTkEntry(tab, placeholder_text="https://open.spotify.com/playlist/... or raw ID", font=("Segoe UI", 11))
+        # Playlist URL Input
+        ctk.CTkLabel(tab, text="Playlist URL/ID:", font=("Segoe UI", 12, "bold")).grid(row=0, column=0, padx=15, pady=10, sticky="w")
+        self.playlist_entry = ctk.CTkEntry(tab, placeholder_text="Enter Spotify, SoundCloud, YouTube, Deezer, or Apple Music link", font=("Segoe UI", 11))
         self.playlist_entry.grid(row=0, column=1, columnspan=2, padx=(0, 15), pady=10, sticky="ew")
+        self.playlist_entry.bind("<KeyRelease>", self.on_playlist_input_changed)
         
         # Output directory
         ctk.CTkLabel(tab, text="Output Folder:", font=("Segoe UI", 12, "bold")).grid(row=1, column=0, padx=15, pady=10, sticky="w")
@@ -247,6 +255,16 @@ class DjaelYTPlaylistDWNLD(ctk.CTk):
             self.dest_entry.delete(0, "end")
             self.dest_entry.insert(0, selected)
             self.save_settings_from_gui()
+            
+    def on_playlist_input_changed(self, event=None):
+        url = self.playlist_entry.get().strip()
+        if not url:
+            return
+        from core.playlist_extractor import detect_platform
+        platform = detect_platform(url)
+        if platform != "Unknown" and platform != self.last_detected_platform:
+            self.last_detected_platform = platform
+            self.append_log(f"[PLATFORM] Detected playlist platform: {platform}")
             
     def append_log(self, text):
         self.log_box.configure(state="normal")
