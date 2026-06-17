@@ -1,7 +1,0 @@
-SpotipyFree
-websockets
-ytmusicapi
-yt-dlp
-mutagen
-customtkinter
-requests
